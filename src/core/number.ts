@@ -1,11 +1,21 @@
 import { Schema, ParseResult } from '../types/schema.js';
 
-export const number = (): Schema<number> => {
-  return {
-    parse(value: unknown): ParseResult<number> {
-      return typeof value === 'number'
-        ? { success: true, value }
-        : { success: false, error: 'Number Expected' };
-    },
-  };
-};
+export class InuNumber extends Schema<number> {
+  parse(value: unknown): ParseResult<number> {
+    if (typeof value === 'number' && !isNaN(value)) {
+      return {
+        success: true,
+        value,
+      };
+    }
+
+    return {
+      success: false,
+      error: 'Number Expected',
+    };
+  }
+}
+
+export function number(): Schema<number> {
+  return new InuNumber();
+}

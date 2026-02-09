@@ -11,17 +11,13 @@ export class InuArray<T> extends Schema<T[]> {
 
   parse(value: unknown): ParseResult<T[]> {
     if (!isArray(value)) {
-      return {
-        success: false,
-        error: 'Array Expected',
-      };
+      return { success: false, error: 'Array Expected' };
     }
 
     const validatedArray: T[] = [];
 
     for (let i = 0; i < value.length; i++) {
-      const item = value[i];
-      const result = this.itemSchema.parse(item);
+      const result = this.itemSchema.parse(value[i]);
 
       if (result.success === false) {
         return {
@@ -33,13 +29,21 @@ export class InuArray<T> extends Schema<T[]> {
       validatedArray.push(result.value);
     }
 
-    return {
-      success: true,
-      value: validatedArray,
-    };
+    return { success: true, value: validatedArray };
   }
 }
 
-export function array<T>(itemSchema: Schema<T>): Schema<T[]> {
-  return new InuArray<T>(itemSchema);
+export function array<T>(input: Schema<T> | [Schema<T>]): Schema<T[]> {
+  if (Array.isArray(input)) {
+    if (input.length !== 1) {
+      throw new Error(
+        `[InuError] inu.array([...]) must contain exactly one schema. 
+         - For multiple types in any order, use inu.union().
+         - For a fixed sequence, use inu.tuple().`,
+      );
+    }
+    return new InuArray<T>(input[0]);
+  }
+
+  return new InuArray<T>(input);
 }
