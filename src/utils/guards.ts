@@ -5,7 +5,7 @@ export function isSchema(value: unknown): value is Schema<unknown> {
     typeof value === 'object' &&
     value !== null &&
     'parse' in value &&
-    typeof (value as { parse?: unknown }).parse === 'function'
+    typeof value.parse === 'function'
   );
 }
 
