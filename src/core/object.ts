@@ -1,16 +1,44 @@
 import { Schema, ParseResult, NestedShape } from '../types/schema.js';
 import { isRecord, isSchema } from '../utils/guards.js';
 
+type IsOptional<T> = undefined extends T ? true : false;
+
+
 export type ShapeToType<S> =
   S extends Schema<infer T>
     ? T
     : {
-        [K in keyof S]: S[K] extends Schema<infer T>
+        [K in keyof S as IsOptional<
+          S[K] extends Schema<infer T> ? T : never
+        > extends true
+          ? never
+          : K]: S[K] extends Schema<infer T>
+          ? T
+          : S[K] extends Record<string, unknown>
+            ? ShapeToType<S[K]>
+            : never;
+      } & {
+        [K in keyof S as IsOptional<
+          S[K] extends Schema<infer T> ? T : never
+        > extends true
+          ? K
+          : never]?: S[K] extends Schema<infer T>
           ? T
           : S[K] extends Record<string, unknown>
             ? ShapeToType<S[K]>
             : never;
       };
+
+// export type ShapeToType<S> =
+//   S extends Schema<infer T>
+//     ? T
+//     : {
+//         [K in keyof S]: S[K] extends Schema<infer T>
+//           ? T
+//           : S[K] extends Record<string, unknown>
+//             ? ShapeToType<S[K]>
+//             : never;
+//       };
 
 type ParsedField<T> =
   | { key: string; success: true; value: T }

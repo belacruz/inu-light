@@ -18,5 +18,6 @@ export const inu = {
   literal,
 };
 
+
 export type { Schema, ParseResult } from './types/schema.js';
 export type { ShapeToType } from './core/object.js';
