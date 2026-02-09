@@ -57,7 +57,10 @@ export class InuObject<S extends NestedShape> extends Schema<ShapeToType<S>> {
     const failed = parsedFields.find((f) => f.success === false);
 
     if (failed && !failed?.success) {
-      return { success: false, error: `Invalid field "${failed.key}"` };
+      return {
+        success: false,
+        error: `Invalid field "${failed.key}": ${failed.error}`,
+      };
     }
 
     const finalObject = parsedFields.reduce(
