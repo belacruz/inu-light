@@ -5,11 +5,28 @@ export type ParseResult<T> =
 export abstract class Schema<T> {
   abstract parse(value: unknown): ParseResult<T>;
 
-  optional(): void {
-    console.log('Este método será herdado por todos!');
+  optional(): Schema<T | undefined> {
+    if (this instanceof InuOptional) {
+      return this;
+    }
+    return new InuOptional(this);
   }
 }
 
 export type NestedShape = {
   [k: string]: Schema<unknown> | NestedShape;
 };
+
+class InuOptional<T> extends Schema<T | undefined> {
+  constructor(private innerSchema: Schema<T>) {
+    super();
+  }
+
+  parse(value: unknown): ParseResult<T | undefined> {
+    if (value === undefined) {
+      return { success: true, value: undefined };
+    }
+
+    return this.innerSchema.parse(value);
+  }
+}
