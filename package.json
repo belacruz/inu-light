@@ -1,18 +1,24 @@
 {
   "name": "inu-light",
   "version": "1.0.0",
-  "description": "Library de validação de schemas em runtime",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "A ultra-lightweight TypeScript validation library with zero dependencies.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "belacruz",
-  "license": "ISC",
-  "devDependencies": {
-    "typescript": "^5.9.3"
-  }
+  "keywords": [
+    "validation",
+    "typescript",
+    "schema",
+    "lightweight",
+    "zod-like"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT"
 }
