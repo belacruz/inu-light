@@ -11,6 +11,10 @@ export abstract class Schema<T> {
     }
     return new InuOptional(this);
   }
+  nullable(): Schema<T | null> {
+    if (this instanceof InuNullable) return this;
+    return new InuNullable(this);
+  }
 }
 
 export type NestedShape = {
@@ -25,6 +29,20 @@ class InuOptional<T> extends Schema<T | undefined> {
   parse(value: unknown): ParseResult<T | undefined> {
     if (value === undefined) {
       return { success: true, value: undefined };
+    }
+
+    return this.innerSchema.parse(value);
+  }
+}
+
+class InuNullable<T> extends Schema<T | null> {
+  constructor(private innerSchema: Schema<T>) {
+    super();
+  }
+
+  parse(value: unknown): ParseResult<T | null> {
+    if (value === null) {
+      return { success: true, value: null };
     }
 
     return this.innerSchema.parse(value);
